@@ -13,7 +13,7 @@ public class Main {
         double secondNumber = scanner.nextDouble();
 
 
-        System.out.println("Do you want to use A, S, M, or D?");
+        System.out.println("Do you want to use (A)dd, (S)ubstract,(M)ultiply, or (D)ivide?");
         scanner.nextLine();
         String functionUsed = scanner.nextLine();
 
@@ -33,19 +33,9 @@ public class Main {
             double result = firstNumber / secondNumber;
             System.out.printf("%.2f / %.2f = %.2f", firstNumber, secondNumber, result);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
+        else {
+            System.out.println("This will not work!");
+            }
 
         }
     }
