@@ -44,15 +44,11 @@ public class Main {
         System.out.println("Rental Details:");
         System.out.println("Pick-up Date: " + pickupDate);
         System.out.println("Rental Days: " + rentalDays);
-        System.out.printf("Basic Rental Cost: $%.2f" , basicRentalCost);
-        System.out.println("");
-        System.out.printf("Electronic Toll Tag Cost: $%.2f" , electronicTollTagCost);
-        System.out.println("");
-        System.out.printf("GPS Cost: $%.2f" , gpsCost);
-        System.out.println("");
-        System.out.printf("Roadside Assistance Cost: $%.2f" , roadsideAssistanceCost);
-        System.out.println("");
-        System.out.printf("Total Cost: $%.2f" , totalCost);
+        System.out.printf("Basic Rental Cost: $%.2f%n" , basicRentalCost);
+        System.out.printf("Electronic Toll Tag Cost: $%.2f%n" , electronicTollTagCost);
+        System.out.printf("GPS Cost: $%.2f%n" , gpsCost);
+        System.out.printf("Roadside Assistance Cost: $%.2f%n" , roadsideAssistanceCost);
+        System.out.printf("Total Cost: $%.2f%n" , totalCost);
 
         scanner.close();
     }
