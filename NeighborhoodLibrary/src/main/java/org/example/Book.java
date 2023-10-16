@@ -55,7 +55,7 @@ public class Book {
         System.out.println("Enter your name: ");
         String userName = scanner.nextLine();
 
-        isCheckedOut = true;
+        this.isCheckedOut = true;
         checkedOutTo = userName;
 
         System.out.println("You have successfully checked out '" + title + "' with your name: " + checkedOutTo);

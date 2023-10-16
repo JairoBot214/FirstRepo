@@ -61,9 +61,9 @@ public class Main {
                             int bookNumber = scanner.nextInt();
                             scanner.nextLine();
 
-                            if (bookNumber >= 1 && bookNumber < books.length) {
+                            if (bookNumber >= 1 && bookNumber <= books.length) {
                                 Book selectedbook = books[bookNumber - 1];
-                                selectedbook.isCheckOut();
+                                selectedbook.checkOut();
                             }
                             else {
                                 System.out.println("Invalid book number");
