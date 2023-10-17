@@ -65,7 +65,7 @@ public class Main {
                                 Book selectedbook = books[bookNumber - 1];
                                 selectedbook.checkOut();
                             }
-                            else {
+                            else{
                                 System.out.println("Invalid book number");
                             }
                             break;
@@ -94,17 +94,16 @@ public class Main {
                         if (bookNumber >= 1 && bookNumber <= books.length) {
                             Book selectedBook = books[bookNumber - 1];
                             selectedBook.checkIn();
-                        } else {
+                        }
+                        else {
                             System.out.println("Invalid book number.");
                         }
                     }
                     else if (checkedOutBooksOptions.equalsIgnoreCase("x")) {
                     }
-                    else {
+                    default:
                         System.out.println("Invalid command. Returning to the home screen.");
-                    }
                     break;
-
                     case 3:
                     System.exit(0);
                 }
