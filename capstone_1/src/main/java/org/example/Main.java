@@ -5,22 +5,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     private static DateTimeFormatter timeFormatter;
-
     public static void main(String[] args) {
         ArrayList<Ledger> transactionList = new ArrayList<>();
-
         //setting date and time formats
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
-
-        try {
+        /*try {
             FileInputStream fis = new FileInputStream("src/main/resources/transactions.csv");
             Scanner scanner = new Scanner(fis);
             scanner.nextLine(); // Skip the header line
@@ -40,7 +34,7 @@ public class Main {
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Your file is not there");
-        }
+        }*/
 
         boolean isMakingSelection = true;
         Scanner scanner = new Scanner(System.in);
@@ -49,7 +43,7 @@ public class Main {
             System.out.println("Options:");
             System.out.println("A. Add a Deposit.");
             System.out.println("M. Make a Payment(Debit).");
-            System.out.println("D. Display Ledger.");
+            System.out.println("L. Display Ledger.");
             System.out.println("X. Exit Application.");
             System.out.println("Please enter a choice: ");
 
@@ -59,10 +53,10 @@ public class Main {
                 try {
                     homeScanner = scanner.next().charAt(0);
                     homeScanner = Character.toUpperCase(homeScanner); // Convert input to uppercase
-                    if (homeScanner == 'A' || homeScanner == 'M' || homeScanner == 'D' || homeScanner == 'X') {
+                    if (homeScanner == 'A' || homeScanner == 'M' || homeScanner == 'L' || homeScanner == 'X') {
                         break; // If a valid choice is selected, continue the app as normal; if invalid, the user will be asked for valid input
                     } else {
-                        System.out.println("Please enter a valid choice: A, M, D, or X");
+                        System.out.println("Please enter a valid choice: A, M, L, or X");
                     }
                 } catch (InputMismatchException ex) {
                     System.out.println("Invalid input. Please try again.");
@@ -77,8 +71,8 @@ public class Main {
                 case 'M':
                     makePayment(transactionList);
                     break;
-                case 'D':
-                    report(transactionList);
+                case 'L':
+                    displayLedger(transactionList);
                     break;
                 case 'X':
                     System.exit(0);
@@ -115,14 +109,7 @@ public class Main {
             File file = new File("src/main/resources/transactions.csv");
 
 
-            // If the file doesn't exist, write the header
-            if (!file.exists()) {
-                FileWriter newTransactionWriter = new FileWriter("src/main/resources/transactions.csv");
-                newTransactionWriter.write("Date|Time|Description|Vendor|Amount\n");
-                newTransactionWriter.close();
-            }
-
-            try (FileWriter appendTransactionWriter = new FileWriter("src/main/resources/transactions.csv", true)) {
+            FileWriter appendTransactionWriter = new FileWriter("src/main/resources/transactions.csv",true);
                 appendTransactionWriter.write(
                         newTransaction.getDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")) + "|" +
                                 newTransaction.getTime() + "|" +
@@ -131,7 +118,7 @@ public class Main {
                                 newTransaction.getAmount() + "\n"
                 );
                 appendTransactionWriter.close();
-            }
+
 
         } catch (IOException ex) {
             System.out.println("There's a problem with saving the transaction to CSV.");
@@ -168,6 +155,72 @@ public class Main {
         transactionList.add(newTransaction);
         saveTransactionToCSV(newTransaction);
         System.out.println("Payment successfully added.\n");
+    }
+    static void displayLedger(ArrayList<Ledger> transactionList) {
+        Scanner scanner = new Scanner(System.in);
+        boolean isMakingSelection = true;
+
+        while (isMakingSelection) {
+            System.out.println("Welcome to the Ledger Menu.");
+            System.out.println("1. Display all entries.");
+            System.out.println("2. Display Deposits.");
+            System.out.println("3. Display Payments.");
+            System.out.println("4. Run Report.");
+            System.out.println("5. Go back to the home screen.");
+            System.out.print("Please enter a number: ");
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    displayAllEntries(transactionList);
+                    break;
+                case 2:
+                    displayDeposits(transactionList);
+                    break;
+                case 3:
+                    displayPayments(transactionList);
+                    break;
+                case 4:
+                    report(transactionList);
+                    break;
+                case 5:
+                    isMakingSelection = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
+            }
+        }
+    }
+   static void displayAllEntries(ArrayList<Ledger> transactionList) {
+        // Sort the transactionList by date in descending order (newest to oldest)
+//        Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
+        // Display all entries from transactionList
+        for (Ledger transaction : transactionList) {
+            System.out.println(transaction);
+        }
+    }
+
+   static void displayDeposits(ArrayList<Ledger> transactionList) {
+        // Sort again newest to oldest
+        Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
+        // Display deposits only
+        for (Ledger transaction : transactionList) {
+            if (transaction.getAmount() > 0) {
+                System.out.println(transaction);
+            }
+        }
+    }
+
+   static void displayPayments(ArrayList<Ledger> transactionList) {
+        // Sort again newest to oldest
+        Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
+        // Display payments or negative entries only
+        for (Ledger transaction : transactionList) {
+            if (transaction.getAmount() < 0) {
+                System.out.println(transaction);
+            }
+        }
     }
 
     // Your other methods and classes...
@@ -222,9 +275,9 @@ public class Main {
             if(YearMonth.now().equals(YearMonth.from(transaction.getDate()))){
                 filteredTransactions.add(transaction);
             }
+
             System.out.println(filteredTransactions);
         }
-
     }
 
     static List<Ledger> previousMonth(ArrayList<Ledger> transactionList) {
