@@ -8,7 +8,7 @@ public class Book {
     private boolean isCheckedOut;
     private String checkedOutTo;
 
-
+//The constructor should go after the properties for readability
     public int getId() {
         return bookId;
     }
@@ -71,6 +71,16 @@ public class Book {
         this.title = title;
         this.isCheckedOut = isCheckOut;
         this.checkedOutTo = checkedOutTo;
+    }
+
+    //You could do the constructor like this for less typing since you know in the beginning it won't be checked out
+    //and it's not checked out to anyone
+    public Book(int bookId, String isbn, String title) {
+        this.bookId = bookId;
+        this.isbn = isbn;
+        this.title = title;
+        this.isCheckedOut = false;
+        this.checkedOutTo = "";
     }
 
     public static void showAvailableBooks(Book[] books) {

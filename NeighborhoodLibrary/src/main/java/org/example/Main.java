@@ -4,6 +4,12 @@ import java.util.Scanner;
 import static org.example.Book.showAvailableBooks;
 import static org.example.Book.showCheckedOutBook;
 
+/*
+Overall, good job!
+There is a weird bug with check in. I checked in a book, and then it told me invalid command but checked the book in anyway
+You might want to update that.
+I left comments for you to peruse, but overall, it's functional!
+ */
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -42,6 +48,7 @@ public class Main {
             int command = scanner.nextInt();
             scanner.nextLine();
 
+            //good job breaking things down into methods.
             switch (command) {
                 case 1:
                     showAvailableBooks(books);
