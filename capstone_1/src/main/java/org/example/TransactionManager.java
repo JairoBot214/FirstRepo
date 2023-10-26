@@ -5,12 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Comparator;
 
 public class TransactionManager {
     ArrayList<Ledger> transactionList = new ArrayList<>();
-
-    public void readTransaction() {
+    public void readTransaction(){
 
 
         //setting date and time formats
@@ -40,11 +43,10 @@ public class TransactionManager {
             System.out.println("Your file is not there");
         }
     }
-
     public void addDeposit(ArrayList<Ledger> transactionList) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the following deposit information:");
-        System.out.print("Enter the date (mm-DD-YYYY): ");
+        System.out.print("Enter the date (MM-DD-YYYY): ");
         LocalDate dateInput = LocalDate.parse(scanner.next(), DateTimeFormatter.ofPattern("mm-DD-yyyy"));
         scanner.nextLine();
         System.out.print("Enter the time (Hour:Minute AM/PM): ");
@@ -61,7 +63,6 @@ public class TransactionManager {
         saveTransactionToCSV(newTransaction);
         System.out.println("Deposit successfully added. \n");
     }
-
     private void saveTransactionToCSV(Ledger newTransaction) {
         try {
             File file = new File("src/main/resources/transactions.csv");
@@ -90,7 +91,6 @@ public class TransactionManager {
         }
 
     }
-
     public void makePayment(ArrayList<Ledger> transactionList) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the following payment information:");
@@ -121,20 +121,18 @@ public class TransactionManager {
         saveTransactionToCSV(newTransaction);
         System.out.println("Payment successfully added.\n");
     }
-
     public void monthToDate(ArrayList<Ledger> transactionList) {
         LocalDate currentDate = LocalDate.now();
         List<Ledger> filteredTransactions = new ArrayList<>();
 
         for (Ledger transaction : transactionList) {
-            if (YearMonth.now().equals(YearMonth.from(transaction.getDate()))) {
+            if(YearMonth.now().equals(YearMonth.from(transaction.getDate()))){
                 filteredTransactions.add(transaction);
             }
             System.out.println(filteredTransactions);
         }
 
     }
-
     public List<Ledger> previousMonth(ArrayList<Ledger> transactionList) {
         LocalDate currentDate = LocalDate.now();
         LocalDate startDateOfPreviousMonth = currentDate.minusMonths(1).withDayOfMonth(1);
@@ -193,6 +191,45 @@ public class TransactionManager {
         }
     }
 
+    public void customSearch(ArrayList<Ledger> transactions) {
+        Scanner scanner = new Scanner(System.in);
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+        String description;
+        String vendor;
+        double amount = -1;
+
+        // Search prompts
+
+        System.out.print("Enter start date (yyyy-MM-dd) or leave blank: ");
+        String startDateInput = scanner.nextLine();
+        if (!startDateInput.isEmpty()) {
+            startDate = LocalDate.parse(startDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
+        System.out.print("Enter end date (yyyy-MM-dd) or leave blank: ");
+        String endDateInput = scanner.nextLine();
+        if (!endDateInput.isEmpty()) {
+            endDate = LocalDate.parse(endDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
+        System.out.print("Enter description or leave blank: ");
+        description = scanner.nextLine();
+
+        System.out.print("Enter vendor or leave blank: ");
+        vendor = scanner.nextLine();
+
+        System.out.print("Enter amount or leave blank: ");
+        String amountInput = scanner.nextLine();
+        if (!amountInput.isEmpty()) {
+            try {
+                amount = Double.parseDouble(amountInput);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input for amount. Please enter a valid number.");
+                // Handle the exception as per your application's requirements
+            }
+        }
+    }
     public void displayAllEntries(ArrayList<Ledger> transactionList) {
         // Sort the transactionList by date in descending order (newest to oldest)
         Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
@@ -200,10 +237,7 @@ public class TransactionManager {
         for (Ledger transaction : transactionList) {
             System.out.println(transaction);
         }
-
-
     }
-
 
     public void displayDeposits(ArrayList<Ledger> transactionList) {
         // Sort again newest to oldest
@@ -226,7 +260,6 @@ public class TransactionManager {
             }
         }
     }
-
     public void displayLedger(ArrayList<Ledger> transactionList) {
         Scanner scanner = new Scanner(System.in);
         boolean isMakingSelection = true;
@@ -263,7 +296,6 @@ public class TransactionManager {
             }
         }
     }
-
     public void report(ArrayList<Ledger> transactionList) {
         Scanner scanner = new Scanner(System.in);
         boolean isMakingSelection = true;
@@ -275,7 +307,8 @@ public class TransactionManager {
             System.out.println("3. Year to Date.");
             System.out.println("4. Previous Year.");
             System.out.println("5. Search by Vendor.");
-            System.out.println("6. Back.");
+            System.out.println("6. Custom Search.");
+            System.out.println("7. Back.");
             System.out.print("Please enter a number: ");
 
             int choice = scanner.nextInt();
@@ -297,9 +330,11 @@ public class TransactionManager {
                     searchByVendor(transactionList);
                     break;
                 case 6:
+                    customSearch(transactionList);
+                    break;
+                case 7:
                     isMakingSelection = false;
                     break;
-
             }
         }
 

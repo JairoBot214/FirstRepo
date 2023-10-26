@@ -1,5 +1,4 @@
 package org.example;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -64,7 +63,7 @@ public class Ledger {
 
     @Override
     public String toString(){
-        return String.format("%s|%s|%s|%s|%.2f", date, time.format(DateTimeFormatter.ofPattern("HH:mm")), description, vendor, amount);
+        return String.format("%s|%s|%s|%s|%.2f", date, time.format(DateTimeFormatter.ofPattern("h:mm a")), description, vendor, amount);
     }
 }
 
