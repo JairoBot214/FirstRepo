@@ -7,7 +7,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Comparator;
 
@@ -19,7 +18,7 @@ public class TransactionManager {
         //setting date and time formats
 
         try {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
             FileInputStream fis = new FileInputStream("src/main/resources/transactions.csv");
@@ -46,8 +45,8 @@ public class TransactionManager {
     public void addDeposit(ArrayList<Ledger> transactionList) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the following deposit information:");
-        System.out.print("Enter the date (MM-DD-YYYY): ");
-        LocalDate dateInput = LocalDate.parse(scanner.next(), DateTimeFormatter.ofPattern("mm-DD-yyyy"));
+        System.out.print("Enter the date (yyyy-MM-dd): ");
+        LocalDate dateInput = LocalDate.parse(scanner.next(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         scanner.nextLine();
         System.out.print("Enter the time (Hour:Minute AM/PM): ");
         LocalTime timeInput = LocalTime.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("h:mm a"));
@@ -77,7 +76,7 @@ public class TransactionManager {
 
             try (FileWriter appendTransactionWriter = new FileWriter("src/main/resources/transactions.csv", true)) {
                 appendTransactionWriter.write(
-                        newTransaction.getDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")) + "|" +
+                        newTransaction.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "|" +
                                 newTransaction.getTime() + "|" +
                                 newTransaction.getDescription() + "|" +
                                 newTransaction.getVendor() + "|" +
@@ -95,8 +94,8 @@ public class TransactionManager {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the following payment information:");
 
-        System.out.print("Enter the date (DD-MM-YYYY): ");
-        LocalDate dateInput = LocalDate.parse(scanner.next(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        System.out.print("Enter the date (yyyy-mm-dd): ");
+        LocalDate dateInput = LocalDate.parse(scanner.next(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         System.out.print("Enter the time (Hour:Minute AM/PM): ");
         String timeInputString = scanner.next() + " " + scanner.next();
@@ -123,41 +122,33 @@ public class TransactionManager {
     }
     public void monthToDate(ArrayList<Ledger> transactionList) {
         LocalDate currentDate = LocalDate.now();
-        List<Ledger> filteredTransactions = new ArrayList<>();
-
         for (Ledger transaction : transactionList) {
-            if(YearMonth.now().equals(YearMonth.from(transaction.getDate()))){
-                filteredTransactions.add(transaction);
+            if (YearMonth.now().equals(YearMonth.from(transaction.getDate()))) {
+                System.out.println(transaction);
             }
-            System.out.println(filteredTransactions);
+
         }
 
-    }
-    public List<Ledger> previousMonth(ArrayList<Ledger> transactionList) {
+}
+    public void previousMonth(ArrayList<Ledger> transactionList) {
         LocalDate currentDate = LocalDate.now();
         LocalDate startDateOfPreviousMonth = currentDate.minusMonths(1).withDayOfMonth(1);
         LocalDate endDateOfPreviousMonth = currentDate.withDayOfMonth(1).minusDays(1);
-
-        List<Ledger> filteredTransactions = new ArrayList<>();
-
         for (Ledger transaction : transactionList) {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(startDateOfPreviousMonth) && transactionDate.isBefore(endDateOfPreviousMonth)) {
-                filteredTransactions.add(transaction);
+                System.out.println(transaction);
 
             }
 
         }
-        return filteredTransactions;
     }
 
     public void yearToDate(ArrayList<Ledger> transactionList) {
         LocalDate currentDate = LocalDate.now();
-        List<Ledger> filteredTransactions = new ArrayList<>();
-
         for (Ledger transaction : transactionList) {
             if (transaction.getDate().getYear() == currentDate.getYear()) {
-                filteredTransactions.add(transaction);
+                System.out.println(transaction);
             }
         }
     }
@@ -167,12 +158,11 @@ public class TransactionManager {
         LocalDate startDateOfPreviousYear = currentDate.minusYears(1).withDayOfYear(1);
         LocalDate endDateOfPreviousYear = currentDate.withDayOfYear(1).minusDays(1);
 
-        List<Ledger> filteredTransactions = new ArrayList<>();
 
         for (Ledger transaction : transactionList) {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(startDateOfPreviousYear) && transactionDate.isBefore(endDateOfPreviousYear)) {
-                filteredTransactions.add(transaction);
+                System.out.println(transaction);
             }
         }
     }
@@ -182,54 +172,13 @@ public class TransactionManager {
         System.out.print("Enter the vendor name: ");
         String vendorName = scanner.nextLine();
 
-        List<Ledger> filteredTransactions = new ArrayList<>();
-
         for (Ledger transaction : transactionList) {
             if (transaction.getVendor().equalsIgnoreCase(vendorName)) {
-                filteredTransactions.add(transaction);
+                System.out.println(transaction);
             }
         }
     }
 
-    public void customSearch(ArrayList<Ledger> transactions) {
-        Scanner scanner = new Scanner(System.in);
-        LocalDate startDate = null;
-        LocalDate endDate = null;
-        String description;
-        String vendor;
-        double amount = -1;
-
-        // Search prompts
-
-        System.out.print("Enter start date (yyyy-MM-dd) or leave blank: ");
-        String startDateInput = scanner.nextLine();
-        if (!startDateInput.isEmpty()) {
-            startDate = LocalDate.parse(startDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-
-        System.out.print("Enter end date (yyyy-MM-dd) or leave blank: ");
-        String endDateInput = scanner.nextLine();
-        if (!endDateInput.isEmpty()) {
-            endDate = LocalDate.parse(endDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-
-        System.out.print("Enter description or leave blank: ");
-        description = scanner.nextLine();
-
-        System.out.print("Enter vendor or leave blank: ");
-        vendor = scanner.nextLine();
-
-        System.out.print("Enter amount or leave blank: ");
-        String amountInput = scanner.nextLine();
-        if (!amountInput.isEmpty()) {
-            try {
-                amount = Double.parseDouble(amountInput);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input for amount. Please enter a valid number.");
-                // Handle the exception as per your application's requirements
-            }
-        }
-    }
     public void displayAllEntries(ArrayList<Ledger> transactionList) {
         // Sort the transactionList by date in descending order (newest to oldest)
         Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
@@ -307,8 +256,7 @@ public class TransactionManager {
             System.out.println("3. Year to Date.");
             System.out.println("4. Previous Year.");
             System.out.println("5. Search by Vendor.");
-            System.out.println("6. Custom Search.");
-            System.out.println("7. Back.");
+            System.out.println("6. Back.");
             System.out.print("Please enter a number: ");
 
             int choice = scanner.nextInt();
@@ -328,9 +276,6 @@ public class TransactionManager {
                     break;
                 case 5:
                     searchByVendor(transactionList);
-                    break;
-                case 6:
-                    customSearch(transactionList);
                     break;
                 case 7:
                     isMakingSelection = false;

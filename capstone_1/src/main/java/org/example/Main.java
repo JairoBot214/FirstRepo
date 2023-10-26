@@ -1,18 +1,10 @@
 package org.example;
 
-import java.io.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static DateTimeFormatter timeFormatter;
-
 
     public static void main(String[] args) {
 
