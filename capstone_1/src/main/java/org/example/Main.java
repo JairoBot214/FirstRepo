@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Main {
     private static DateTimeFormatter timeFormatter;
+
     public static void main(String[] args) {
         ArrayList<Ledger> transactionList = new ArrayList<>();
         //setting date and time formats
@@ -106,18 +107,19 @@ public class Main {
 
     private static void saveTransactionToCSV(Ledger newTransaction) {
         try {
-            File file = new File("src/main/resources/transactions.csv");
+            InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("transactions.csv");
+            Scanner scanner = new Scanner(inputStream);
 
 
-            FileWriter appendTransactionWriter = new FileWriter("src/main/resources/transactions.csv",true);
-                appendTransactionWriter.write(
-                        newTransaction.getDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")) + "|" +
-                                newTransaction.getTime() + "|" +
-                                newTransaction.getDescription() + "|" +
-                                newTransaction.getVendor() + "|" +
-                                newTransaction.getAmount() + "\n"
-                );
-                appendTransactionWriter.close();
+            FileWriter appendTransactionWriter = new FileWriter("src/main/resources/transactions.csv", true);
+            appendTransactionWriter.write(
+                    newTransaction.getDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")) + "|" +
+                            newTransaction.getTime() + "|" +
+                            newTransaction.getDescription() + "|" +
+                            newTransaction.getVendor() + "|" +
+                            newTransaction.getAmount() + "\n"
+            );
+            appendTransactionWriter.close();
 
 
         } catch (IOException ex) {
@@ -156,6 +158,7 @@ public class Main {
         saveTransactionToCSV(newTransaction);
         System.out.println("Payment successfully added.\n");
     }
+
     static void displayLedger(ArrayList<Ledger> transactionList) {
         Scanner scanner = new Scanner(System.in);
         boolean isMakingSelection = true;
@@ -192,7 +195,8 @@ public class Main {
             }
         }
     }
-   static void displayAllEntries(ArrayList<Ledger> transactionList) {
+
+    static void displayAllEntries(ArrayList<Ledger> transactionList) {
         // Sort the transactionList by date in descending order (newest to oldest)
 //        Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
         // Display all entries from transactionList
@@ -201,9 +205,9 @@ public class Main {
         }
     }
 
-   static void displayDeposits(ArrayList<Ledger> transactionList) {
+    static void displayDeposits(ArrayList<Ledger> transactionList) {
         // Sort again newest to oldest
-        Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
+        transactionList.sort(Comparator.comparing(Ledger::getDate).reversed());
         // Display deposits only
         for (Ledger transaction : transactionList) {
             if (transaction.getAmount() > 0) {
@@ -212,9 +216,9 @@ public class Main {
         }
     }
 
-   static void displayPayments(ArrayList<Ledger> transactionList) {
+    static void displayPayments(ArrayList<Ledger> transactionList) {
         // Sort again newest to oldest
-        Collections.sort(transactionList, Comparator.comparing(Ledger::getDate).reversed());
+        transactionList.sort(Comparator.comparing(Ledger::getDate).reversed());
         // Display payments or negative entries only
         for (Ledger transaction : transactionList) {
             if (transaction.getAmount() < 0) {
@@ -258,9 +262,6 @@ public class Main {
                     searchByVendor(transactionList);
                     break;
                 case 6:
-                    customSearch(transactionList);
-                    break;
-                case 7:
                     isMakingSelection = false;
                     break;
             }
@@ -272,12 +273,11 @@ public class Main {
         List<Ledger> filteredTransactions = new ArrayList<>();
 
         for (Ledger transaction : transactionList) {
-            if(YearMonth.now().equals(YearMonth.from(transaction.getDate()))){
+            if (YearMonth.now().equals(YearMonth.from(transaction.getDate()))) {
                 filteredTransactions.add(transaction);
             }
-
-            System.out.println(filteredTransactions);
         }
+        displayTransactions(filteredTransactions);
     }
 
     static List<Ledger> previousMonth(ArrayList<Ledger> transactionList) {
@@ -291,10 +291,9 @@ public class Main {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(startDateOfPreviousMonth) && transactionDate.isBefore(endDateOfPreviousMonth)) {
                 filteredTransactions.add(transaction);
-
             }
-
         }
+        displayTransactions(filteredTransactions);
         return filteredTransactions;
     }
 
@@ -307,6 +306,7 @@ public class Main {
                 filteredTransactions.add(transaction);
             }
         }
+        displayTransactions(filteredTransactions);
     }
 
     static void previousYear(ArrayList<Ledger> transactionList) {
@@ -322,6 +322,7 @@ public class Main {
                 filteredTransactions.add(transaction);
             }
         }
+        displayTransactions(filteredTransactions);
     }
 
     static void searchByVendor(ArrayList<Ledger> transactionList) {
@@ -336,48 +337,32 @@ public class Main {
                 filteredTransactions.add(transaction);
             }
         }
+        displayTransactions(filteredTransactions);
     }
 
-    static void customSearch(ArrayList<Ledger> transactions) {
-        Scanner scanner = new Scanner(System.in);
-        LocalDate startDate = null;
-        LocalDate endDate = null;
-        String description;
-        String vendor;
-        double amount = -1;
-
-        // Search prompts
-
-        System.out.print("Enter start date (yyyy-MM-dd) or leave blank: ");
-        String startDateInput = scanner.nextLine();
-        if (!startDateInput.isEmpty()) {
-            startDate = LocalDate.parse(startDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    static void displayTransactions(List<Ledger> transactions) {
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found.");
+            return;
         }
-
-        System.out.print("Enter end date (yyyy-MM-dd) or leave blank: ");
-        String endDateInput = scanner.nextLine();
-        if (!endDateInput.isEmpty()) {
-            endDate = LocalDate.parse(endDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-
-        System.out.print("Enter description or leave blank: ");
-        description = scanner.nextLine();
-
-        System.out.print("Enter vendor or leave blank: ");
-        vendor = scanner.nextLine();
-
-        System.out.print("Enter amount or leave blank: ");
-        String amountInput = scanner.nextLine();
-        if (!amountInput.isEmpty()) {
-            try {
-                amount = Double.parseDouble(amountInput);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input for amount. Please enter a valid number.");
-                // Handle the exception as per your application's requirements
-            }
+        System.out.println("Transactions:");
+        for(Ledger transaction : transactions) {
+            System.out.println("Date: " + transaction.getDate());
+            System.out.println("Time: " + transaction.getTime());
+            System.out.println("Description: " + transaction.getDescription());
+            System.out.println("Vendor: " + transaction.getVendor());
+            System.out.println("Amount: " + transaction.getAmount());
+            System.out.println("------------------------");
         }
     }
+
 }
+
+
+
+
+
+
 
 
 
