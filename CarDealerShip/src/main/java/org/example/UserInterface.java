@@ -12,6 +12,13 @@ public class UserInterface {
         return dealership;
     }
 
+    //So you don't need to instantiate the dealershipfilemanager at all, the methods are static
+    //Also, nothing stops me from putting a dealership with no vehicles. What you could do
+    //is load the vehicles in the constructor like this:
+    public UserInterface(){
+        //You decide how this gets loaded so there are no possible mistakes
+        this.dealership = DealershipFileManager.getDealership();
+    }
     public UserInterface(Dealership dealership) {
         this.dealership = dealership;
         DealershipFileManager dfm = new DealershipFileManager();

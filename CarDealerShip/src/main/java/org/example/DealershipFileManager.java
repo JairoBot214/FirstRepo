@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public class DealershipFileManager {
+    //This is good practice, the file name is a constant
+    //Would be nice to implement a save though especially when we do the contract
     private static final String VEHICLES_FILE_PATH = "src/main/resources/Vehicles.csv";
 
     public static Dealership getDealership() {
