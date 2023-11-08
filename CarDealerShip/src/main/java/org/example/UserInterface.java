@@ -1,22 +1,17 @@
 package org.example;
 
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class UserInterface {
-    Dealership dealership;
-    public Dealership getDealership() {
-        return dealership;
+    private Dealership dealership;
+
+    public UserInterface(Dealership dealership){
+        this.dealership = DealershipFileManager.getDealership();
     }
 
-    public UserInterface(Dealership dealership) {
-        this.dealership = dealership;
-        DealershipFileManager dfm = new DealershipFileManager();
-
-    }
 
     public void display() {
         Scanner scanner = new Scanner(System.in);
